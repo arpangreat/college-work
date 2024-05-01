@@ -29,3 +29,13 @@ int main() {
 
   return 0;
 }
+
+/*
+This program takes as input the maximum capacity of the knapsack (W), the values
+of the items (val), the weights of the items (wt), and the number of items (n).
+It then uses dynamic programming to find the maximum profit that can be obtained
+by selecting a subset of the items. The result is printed out at the end.
+
+This implementation has a time complexity of O(n×W), where nn is the
+number of items and WW is the maximum capacity of the knapsack.
+*/
