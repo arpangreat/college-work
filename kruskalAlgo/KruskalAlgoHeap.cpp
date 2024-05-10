@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <queue>
 
 class Edge {
 public:
@@ -7,18 +8,24 @@ public:
   int weight;
 };
 
-bool compare(Edge e1, Edge e2) { return e1.weight < e2.weight; }
-
 int findParent(int v, int *parent) {
   if (parent[v] == v) {
     return v;
   }
   return findParent(parent[v], parent);
 }
+struct Compare_Edge {
+  bool operator()(const Edge &e1, const Edge &e2) {
+    return e1.weight > e2.weight;
+  }
+};
 
 void Kruskal(Edge *input, int n, int E) {
-  // Sort the input array - accending order based on weights
-  std::sort(input, input + E, compare);
+  std::priority_queue<Edge, std::vector<Edge>, Compare_Edge> pq;
+
+  for (int i = 0; i < E; i++) {
+    pq.push(input[i]);
+  }
 
   Edge *output = new Edge[n - 1];
   int *parent = new int[n];
@@ -28,9 +35,10 @@ void Kruskal(Edge *input, int n, int E) {
   }
 
   int count = 0;
-  int i = 0;
-  while (count != n - 1) {
-    Edge currentEdge = input[i];
+
+  while (count != n - 1 && !pq.empty()) {
+    Edge currentEdge = pq.top();
+    pq.pop();
 
     // Check if we can add the currentEdge in MST or not
     int sourceParent = findParent(currentEdge.source, parent);
@@ -41,7 +49,6 @@ void Kruskal(Edge *input, int n, int E) {
       count++;
       parent[sourceParent] = destParent;
     }
-    i++;
   }
 
   int minWeight = 0;
