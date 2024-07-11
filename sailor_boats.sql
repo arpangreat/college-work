@@ -190,8 +190,13 @@ GROUP BY s.rating
 HAVING COUNT(*) > 1;
 
 -- 20
-SELECT temp.rating, temp.avg_age FROM temp WHERE temp.avg_age=(SELECT MIN(temp.avg_age) FROM temp);
-
+-- step-1 creat a view temp
 CREATE VIEW temp AS (
 SELECT rating, AVG(age) AS avg_age FROM Sailor
 GROUP BY rating);
+
+-- step-2 query
+SELECT temp.rating, temp.avg_age FROM temp WHERE temp.avg_age=(SELECT MIN(temp.avg_age) FROM temp);
+
+-- step-3 Drop view after usage
+DROP VIEW temp;
