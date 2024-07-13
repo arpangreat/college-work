@@ -56,7 +56,7 @@ private:
 };
 
 int main() {
-  std::vector<int> arr = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  std::vector<int> arr = {8, 6, 6, 4, 2, 8, 1, 5, 7};
   HeapSort hs(arr);
 
   std::cout << "Original array: ";

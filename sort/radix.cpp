@@ -54,7 +54,7 @@ private:
 };
 
 int main() {
-  std::vector<int> arr = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  std::vector<int> arr = {9, 1, 5, 5, 3, 7, 6, 2, 4};
   RadixSort rs(arr);
 
   std::cout << "Original array: ";

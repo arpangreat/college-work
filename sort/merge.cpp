@@ -62,7 +62,7 @@ private:
 };
 
 int main() {
-  std::vector<int> arr = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  std::vector<int> arr = {6, 8, 5, 2, 9, 3, 6, 4, 1};
   MergeSort ms(arr);
 
   std::cout << "Original array: ";

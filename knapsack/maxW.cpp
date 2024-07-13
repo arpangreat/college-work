@@ -19,10 +19,10 @@ int knapsack(int W, std::vector<int> &wt, std::vector<int> &val, int n) {
 }
 
 int main() {
-  int W = 50;                            // Maximum capacity of the knapsack
-  std::vector<int> val = {60, 100, 120}; // Values of items
-  std::vector<int> wt = {10, 20, 30};    // Weights of items
-  int n = val.size();                    // Number of items
+  int W = 50;                                // Maximum capacity of the knapsack
+  std::vector<int> val = {40, 80, 120, 140}; // Values of items
+  std::vector<int> wt = {20, 30, 50, 60};    // Weights of items
+  int n = val.size();                        // Number of items
 
   int maxProfit = knapsack(W, wt, val, n);
   std::cout << "Maximum profit: " << maxProfit << std::endl;

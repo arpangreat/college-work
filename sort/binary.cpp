@@ -60,7 +60,7 @@ private:
 };
 
 int main() {
-  std::vector<int> arr = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  std::vector<int> arr = {8, 5, 3, 4, 8, 6, 7, 2, 9};
   BinarySort bs(arr);
 
   std::cout << "Original array: ";

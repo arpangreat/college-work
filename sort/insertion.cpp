@@ -35,7 +35,7 @@ public:
 };
 
 int main() {
-  std::vector<int> arr = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  std::vector<int> arr = {4, 2, 5, 1, 9, 3, 5, 8, 6};
   InsertionSort is(arr);
 
   std::cout << "Original array: ";

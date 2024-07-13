@@ -36,7 +36,7 @@ public:
 };
 
 int main() {
-  std::vector<int> arr = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  std::vector<int> arr = {9, 1, 6, 2, 5, 4, 8, 3, 6};
   CountSort cs(arr);
 
   std::cout << "Original array: ";
