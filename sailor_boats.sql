@@ -11,13 +11,33 @@ CREATE TABLE Boats (
 	color VARCHAR(50) NOT NULL
 );
 
+create table empl ( 
+  eno int(3) NOT NULL PRIMARY KEY,
+  ename varchar(50) NOT NULL,
+  job_type varchar(50) NOT NULL,
+  manager char(5),
+  hire_date DATE NOT NULL,
+  dno int,
+  commission decimal(10,2),
+  salary decimal(7,2) NOT NULL,
+  FOREIGN KEY (dno) REFERENCES department(dno),
+  FOREIGN KEY (manager) REFERENCES empl(eno)
+) ENGINE=InnoDB;
+
+create table department (
+  dno int NOT NULL PRIMARY KEY,
+  dname varchar(50) DEFAULT NULL,
+  location varchar(50) DEFAULT 'Delhi',
+) ENGINE=InnoDB;
+
+
 CREATE TABLE Reserves (
 	sid INT,
 	bid INT,
 	day DATE NOT NULL,
 	PRIMARY KEY (sid, bid, day),
 	FOREIGN KEY (sid) REFERENCES Sailors(sid),
-	FOREIGN KEY (bid) REFERENCES Boats(bid)
+	FOREIGN KEY (bid) REFERENCES Boats(bid),
 );
 
 INSERT INTO Sailors (sid, sname, age, rating) VALUES
@@ -51,175 +71,147 @@ INSERT INTO Reserves (sid, bid, day) VALUES
 	(102, 201, '2024-06-06');
 
 -- 1
-select sname, age
-from sailor
-;
+SELECT sname,age from Sailors;
 
 -- 2
-select sname, rating
-from sailor
-where rating > 7
-;
+SELECT sname, rating FROM Sailors WHERE rating > 7;
 
 -- 3
-select s.sname
-from sailor s
-join reserves r on s.sid = r.sid
-where r.bid = 203
-;
+SELECT s.sname FROM Sailors s JOIN Reserves r ON s.sid = r.sid WHERE r.bid = 203;
 
 -- 4
-select s.sname
-from sailor s
-join reserves r on s.sid = r.sid
-join boats b on r.bid = b.bid
-where b.color = 'Red'
-;
+SELECT s.sname FROM Sailors s JOIN Reserves r ON s.sid = r.sid JOIN Boats b ON r.bid = b.bid WHERE b.color = 'Red';
 
 -- 5
-select s.sname
-from sailor s
-join reserves r on s.sid = r.sid
-group by s.sname
-having count(distinct r.bid) >= 1
-;
+SELECT s.sname FROM Sailors s JOIN Reserves r ON s.sid = r.sid GROUP BY s.sname HAVING COUNT(DISTINCT r.bid) >= 1;
 
 -- OR (5)
-select s.sname, group_concat(distinct b.color) as boat_colors
-from sailor s
-join reserves r on s.sid = r.sid
-join boats b on r.bid = b.bid
-group by s.sname
-;
+SELECT s.sname, GROUP_CONCAT(DISTINCT b.color) AS boat_colors FROM Sailors s JOIN Reserves r ON s.sid = r.sid JOIN Boats b ON r.bid = b.bid
+GROUP BY s.sname;
 
 -- 6
-select distinct b.color
-from sailor s
-join reserves r on s.sid = r.sid
-join boats b on r.bid = b.bid
-where s.sname = 'Sailor A'
-;
+SELECT DISTINCT b.color FROM Sailors s JOIN Reserves r ON s.sid = r.sid JOIN Boats b ON r.bid = b.bid WHERE s.sname = 'Sailors A';
 
 -- 7
-select s.sname, s.rating + 1 as new_rating
-from sailor s
-join reserves r1 on s.sid = r1.sid
-join reserves r2 on s.sid = r2.sid and r1.day = r2.day
-where r1.bid <> r2.bid
-group by s.sid
-having count(distinct r1.bid) >= 2
-;
+SELECT s.sname, s.rating + 1 AS new_rating
+FROM Sailors s
+JOIN Reserves r1 ON s.sid = r1.sid
+JOIN Reserves r2 ON s.sid = r2.sid AND r1.day = r2.day
+WHERE r1.bid <> r2.bid
+GROUP BY s.sid
+HAVING COUNT(DISTINCT r1.bid) >= 2;
 
 -- 8
-select s.sname
-from sailor s, boats b, reserves r
-where s.sid = r.sid and r.bid = b.bid and (b.color = 'Red' or b.color = 'Green')
+SELECT s.sname
+FROM Sailors s, Boats b, Reserves r
+WHERE s.sid=r.sid AND r.bid=b.bid
+AND (b.color='Red' OR b.color='Green');
 
 -- 9
-select s.sname
-from sailor s
-where
-    exists (
-        select 1
-        from reserves r1, boats b1
-        where s.sid = r1.sid and r1.bid = b1.bid and b1.color = 'Red'
-    )
-    and exists (
-        select 1
-        from reserves r2, boats b2
-        where s.sid = r2.sid and r2.bid = b2.bid and b2.color = 'Green'
-    )
+SELECT s.sname
+FROM Sailors s
+WHERE EXISTS (
+	SELECT 1
+	FROM Reserves r1, Boats b1
+	WHERE s.sid = r1.sid AND r1.bid = b1.bid AND
+	b1.color='Red'
+)
+AND EXISTS (
+	SELECT 1
+	FROM Reserves r2, Boats b2
+	WHERE s.sid = r2.sid AND r2.bid = b2.bid AND
+	b2.color = 'Green'
+);
 
 -- 10
-select s.sid
-from sailor s, boats b, reserves r
-where s.sid = r.sid and r.bid = b.bid and b.color = 'Red'
-except
-select s2.sid
-from sailor s2, boats b2, reserves r2
-where s2.sid = r2.sid and r2.bid = b2.bid and b2.color = 'Green'
+SELECT s.sid
+FROM Sailors s, Boats b, Reserves r
+WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'Red'
+EXCEPT
+SELECT s2.sid
+FROM Sailors s2, Boats b2, Reserves r2
+WHERE s2.sid = r2.sid AND r2.bid = b2.bid AND
+b2.color = 'Green';
+
+-- 11
+SELECT s.sname
+FROM Sailors s
+WHERE s.sid NOT IN (
+	SELECT r.sid
+	FROM Reserves r
+	JOIN Boats b ON r.bid = b.bid
+	WHERE b.color = 'Red'
+);
 
 -- 12
-select s.sname
-from sailor s
-where
-    s.sid not in (
-        select r.sid from reserves r join boats b on r.bid = b.bid where b.color = 'Red'
-    )
-;
+SELECT s1.sname
+FROM Sailors s1
+WHERE s1.rating > (
+	SELECT s2.rating
+	FROM Sailors s2
+	WHERE s2.sname = 'Sailor A'
+);
 
 -- 13
-select s1.sname
-from sailor s1
-where s1.rating > (select s2.rating from sailor s2 where s2.sname = 'Sailor A')
-;
+SELECT s.sid
+FROM Sailors s
+WHERE s.rating >= ALL (
+	SELECT s2.rating
+	FROM Sailors s2
+);
 
 -- 14
-select s.sid
-from sailor s
-where s.rating >= all(select s2.rating from sailor s2)
-;
+SELECT s.age
+FROM Sailors s
+WHERE s.sname LIKE 'S_%_%_%C';
 
 -- 15
-select s.age
-from sailor s
-where s.sname like 'S_%_%_%C'
-;
+SELECT s.sname
+FROM Sailors s 
+WHERE NOT EXISTS (
+	SELECT b.bid
+	FROM Boats b
+	WHERE NOT EXISTS (
+		SELECT r.bid
+		FROM Reserves r
+		WHERE r.sid = s.sid AND r.bid = b.bid
+	)
+);
 
 -- 16
-select s.sname
-from sailor s
-where
-    not exists (
-        select b.bid
-        from boats b
-        where
-            not exists (
-                select r.bid from reserves r where r.sid = s.sid and r.bid = b.bid
-            )
-    )
-;
-
--- 16
-select s.sname, s.age
-from sailor s
-where s.age = (select max(age) from sailor)
-;
+SELECT s.sname,s.age
+FROM Sailors s
+WHERE s.age = (SELECT MAX(age) FROM Sailors);
 
 -- 17
-select s.sname, s.age
-from sailor s
-where s.age > (select max(s2.age) from sailor s2 where s2.rating = 7)
-;
+SELECT s.sname, s.age
+FROM Sailors s
+WHERE s.age > (
+SELECT MAX(s2.age)
+FROM Sailors s2
+WHERE s2.rating = 7
+);
 
 -- 18
-select s.rating, min(s.age) as minage
-from sailor s
-where s.age >= 18
-group by s.rating
-having (select count(*) from sailor s2 where s.rating = s2.rating) > 1
-;
+SELECT s.rating, MIN(s.age) as minage
+FROM Sailors s
+WHERE s.age>=18
+GROUP BY s.rating
+HAVING (
+SELECT COUNT(*)
+FROM Sailors s2
+WHERE s.rating=s2.rating)>1;
 
 -- 19
-select s.rating, min(s.age) as minage
-from sailor s
-where s.age >= 18
-group by s.rating
-having count(*) > 1
-;
+SELECT s.rating, MIN(s.age) AS minage
+FROM Sailors s
+WHERE s.age >= 18
+GROUP BY s.rating
+HAVING COUNT(*) > 1;
 
 -- 20
--- step-1 creat a view temp
 CREATE VIEW temp AS (
-SELECT rating, AVG(age) AS avg_age FROM Sailor
+SELECT rating, AVG(age) AS avg_age FROM Sailors
 GROUP BY rating);
 
--- step-2 query
-select temp.rating, temp.avg_age
-from temp
-where temp.avg_age = (select min(temp.avg_age) from temp)
-;
-
--- step-3 Drop view after usage
-DROP VIEW temp;
-
+SELECT temp.rating, temp.avg_age FROM temp WHERE temp.avg_age=(SELECT MIN(temp.avg_age) FROM temp);

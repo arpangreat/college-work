@@ -1,0 +1,11 @@
+{
+  "connection": [
+    {
+      "name": "Sailor_Boat",
+      "driver": "mysql",
+      "datasource": {
+        "database": "Sailor_Boat"
+      }
+    }
+  ]
+}
